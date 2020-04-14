@@ -1,28 +1,38 @@
-export const successAccountCreation= (data: any) => ({
+export const successAccountCreation= (payload: any) => ({
   type: 'SUCCESSFUL',
-  payload: data,
+  payload
 });
 
 export const startAction = () => ({
   type: 'STARTED',
 });
 
-export const failedCreation = (err: any) => ({
+export const failedCreation = (payload: any) => ({
   type: 'FAILED',
-  payload: err,
+  payload
 });
 
-export const CheckUserAccount = (data: any) => ({
+export const CheckUserAccount = (payload: any) => ({
   type: 'ACCOUNT_FROM_DB',
-  payload: data
+  payload
 });
 
-export const SavePaymentMethod = (paymentMethod: any) => ({
+export const SavePaymentMethod = (payload: any) => ({
   type: 'SAVE_PAYMENT_METHOD',
-  payload: paymentMethod
-})
+  payload
+});
 
-export const SaveBlockChain = (blockChain: any) => ({
+export const SaveBlockChain = (payload: any) => ({
   type: 'SAVE_BLOCK_CHAIN',
-  payload: blockChain
+  payload
+});
+
+export const SetProcess = (payload: any) => ({
+  type: 'SET_PROCESS',
+  payload
+});
+
+export const SaveRates = (payload: any) => ({
+  type: 'SAVE_RATES',
+  payload
 })

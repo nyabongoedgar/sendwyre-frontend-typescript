@@ -1,50 +1,48 @@
 import React from 'react';
 import { connect } from "react-redux";
 //@ts-ignore
-import Loader from 'react-loader';
 import axios from 'axios';
-import { successAccountCreation, failedCreation, startAction } from "../actions/accountActions"
+import { successAccountCreation, failedCreation, startAction, SetProcess } from "../actions/accountActions"
 //@ts-ignore
-// import { ThemedButton } from "unifyre-web-wallet-components";
-// interface props {
-//     loading: boolean;
-//     account: object;
-//     saveData: (account: any) => void
-// }
+import { ThemedButton } from "unifyre-web-wallet-components";
+
 export class CreateAccount extends React.Component<any, any>{
     constructor(props: any) {
         super(props);
     }
-    render() {
 
+    handleAccountCreation = async () => {
+        try {
+            this.props.dispatch(startAction());
+            this.props.dispatch(SetProcess('Creating an account for you'));
+            const response = await axios.post('http://localhost:3000/api/v1/accounts')
+            this.props.dispatch(successAccountCreation(response.data));
+            this.props.dispatch(SetProcess(''));
+            return response.data;
+        } catch (error) {
+            this.props.dispatch(failedCreation(JSON.stringify(error)));
+            alert(JSON.stringify(error["message"]))
+        }
+    }
+    render() {
+        const {account, loading} = this.props;
         return (
             <React.Fragment>
-                <Loader loaded={!this.props.loading} top="35%" left="35%">
-                <button onClick={async () => {
-                    console.log(this.props)
-                    this.props.dispatch(startAction());
-                    const response = await axios.post('http://localhost:3000/api/v1/accounts')
-                        .then(response => {
-                            console.log(this.props)
-                            this.props.dispatch(successAccountCreation(response.data));
-                        })
-                        .catch(error => {
-                            this.props.dispatch(failedCreation(JSON.stringify(error)));
-                        });
-                    return response;
-                }}> Create Account</button> </Loader>
-                <div id="accountData" style={{color: 'red'}}>
-                    {this.props.account ? 'Account created' : ''}
+               
+                    <ThemedButton onPress={this.handleAccountCreation} text={'Create Account'} />
+                <div id="accountData" style={{ color: 'red' }}>
+                    {account ? 'Account created' : ''}
                     <br />
-                    {this.props.loading === true ? 'creating account' : undefined}
+                    {loading === true ? 'creating account' : undefined}
+                    <br />
+                    
+                    {/* 
+            // @ts-ignore */}
+            Account Status: {account ? JSON.stringify(account.response.status) : ''}
                     <br />
                     {/* 
             // @ts-ignore */}
-            Account Status: {this.props.account ? JSON.stringify(this.props.account.response.status) : ''}
-            <br />
-            {/* 
-            // @ts-ignore */}
-            Account id: {this.props.account ? JSON.stringify(this.props.account.response.id) : ''}
+            Account id: {account ? JSON.stringify(account.response.id) : ''}
 
                 </div>
             </React.Fragment>

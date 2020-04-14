@@ -1,31 +1,48 @@
 import * as React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import axios from "axios";
-import {SavePaymentMethod, SaveBlockChain} from '../actions/accountActions'
-import { stat } from 'fs';
+//@ts-ignore
+import { ThemedButton } from "unifyre-web-wallet-components";
+import { SavePaymentMethod, SaveBlockChain, SetProcess } from '../actions/accountActions'
+
 
 export function PlaidUi(props: any) {
-  // const [result, setResult] = React.useState();
-  // const [paymentMethod, setPaymentMethod] = React.useState(undefined);
-  // const [blockChain, setBlockChain] = React.useState(undefined);
 
-  const attachBlockChainTopaymentMethod = async () => {
-    const response = await axios.post('http://localhost:3000/api/v1/attachBlockChain')
-      .then(response => SaveBlockChain(response.data))
-      .catch(err => console.log(err))
-    return response;
+  const attachBlockChainTopaymentMethod = async (data: any) => {
+    const id = data.paymentMethod.id;
+    try {
+      props.dispatch(SetProcess('Attaching BlockChain to Payment method'));
+      const response = await axios.post('http://localhost:3000/api/v1/attachBlockChain', {
+        accountId: props.account.response.id,
+        paymentMethodId: id
+      });
+      props.dispatch(SaveBlockChain(response.data));
+      props.dispatch(SetProcess(''));
+      alert('Account set up completely');
+      return response.data;
+    }catch (error){
+      alert(JSON.stringify(error));
+    }
+   
   }
 
   const createPaymentMethod = async (publicToken: string) => {
-    const response = await axios.post('http://localhost:3000/api/v1/paymentMethods', {
-      //@ts-ignore
-      publicToken: publicToken,
-      accountId: props.account.response.id
-    })
-      .then(response => props.dispatch(SavePaymentMethod(response.data)))
-      .catch(err => console.log(err));
-    return response;
-  };
+    try {
+      const response = await axios.post('http://localhost:3000/api/v1/paymentMethods', {
+        //@ts-ignore
+        publicToken: publicToken,
+        accountId: props.account.response.id
+      });
+      props.dispatch(SetProcess('Creating payment method'));
+      props.dispatch(SavePaymentMethod(response.data));
+      console.log(props.paymentMethod, '>>>>>>>>>>>>>>>>>>>>>Payment Methods')
+      props.dispatch(SetProcess(''));
+      return attachBlockChainTopaymentMethod(response.data);
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
 
   // @ts-ignore
   let handler = new WyrePmWidget({
@@ -51,15 +68,15 @@ export function PlaidUi(props: any) {
 
   return (
     <React.Fragment>
-      <button onClick={() => handler.open()}>Connect Bank Account</button>
+      <ThemedButton onPress={() => handler.open()} text={'Connect Bank Account'} />
       <br />
       {props.paymentMethod ? `Payment method has been attached to your account: ${props.paymentMethod.paymentMethod.id}` : ''}
       <br />
       {props.paymentMethod ? `Payment method status: ${props.paymentMethod.paymentMethod.status}` : ''}
       <br />
       {/* blockChain Attached: {blockChain ? JSON.stringify(blockChain): 'No'} */}
-      <button onClick={attachBlockChainTopaymentMethod}>AttachblockChain</button>
-      {props.blockChain? `BlockChainAttached ${JSON.stringify(props.blockChain)}` : ''}
+      {/* <ThemedButton onPress={attachBlockChainTopaymentMethod} text={'AttachblockChain'} /> */}
+      {props.blockChain ? `BlockChainAttached ${JSON.stringify(props.blockChain)}` : ''}
     </React.Fragment>
   )
 

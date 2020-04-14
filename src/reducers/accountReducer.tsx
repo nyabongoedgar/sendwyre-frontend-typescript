@@ -4,7 +4,9 @@ const intialState = {
   loading: false,
   paymentMethod: null,
   blockChain: null,
-  accountFromDb: null
+  accountFromDb: null,
+  process: null,
+  rates: null
 };
 
 const AccountReducer = (state = intialState, action: any) => {
@@ -30,20 +32,29 @@ const AccountReducer = (state = intialState, action: any) => {
     case 'SAVE_PAYMENT_METHOD':
       return {
         ...state,
-        paymentMethod: action.payload,
-      }
+        paymentMethod: action.payload
+      };
     case 'SAVE_BLOCK_CHAIN':
+      console.log(action.payload, 'saving blockChain')
       return {
         ...state,
         blockChain: action.payload,
-      }
+      };
     case 'ACCOUNT_FROM_DB':
-      console.log(action.payload, '>>>>>>>>>>>>>>>>>')
       return{
         ...state,
         accountFromDb: action.payload
+      };
+    case 'SET_PROCESS':
+      return {
+        ...state,
+        process: action.payload
+      };
+    case 'SAVE_RATES':
+      return {
+        ...state,
+        rates: action.payload
       }
-
     default:
       return state;
   }

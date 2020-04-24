@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import axios from "axios";
 //@ts-ignore
 import { ThemedButton } from "unifyre-web-wallet-components";
-import { SavePaymentMethod, SaveBlockChain, SetProcess } from '../actions/accountActions'
+import { SavePaymentMethod, SaveBlockChain, SetProcess, SetPlaidError } from '../actions/accountActions'
 
 
 export function PlaidUi(props: any) {
@@ -20,10 +20,10 @@ export function PlaidUi(props: any) {
       props.dispatch(SetProcess(''));
       alert('Account set up completely');
       return response.data;
-    }catch (error){
+    } catch (error) {
       alert(JSON.stringify(error));
     }
-   
+
   }
 
   const createPaymentMethod = async (publicToken: string) => {
@@ -44,6 +44,7 @@ export function PlaidUi(props: any) {
 
   }
 
+  // ** Note on WyrePMWidget the environment,env is set to test. Update that to prod if you're using it in production.
   // @ts-ignore
   let handler = new WyrePmWidget({
     env: "test",
@@ -61,6 +62,7 @@ export function PlaidUi(props: any) {
     onExit: function (err: any) {
       if (err != null) {
         // The user encountered an error prior to exiting the module
+        SetPlaidError(err)
       }
       console.log("Thingo exited:", err);
     }
@@ -76,7 +78,7 @@ export function PlaidUi(props: any) {
       <br />
       {/* blockChain Attached: {blockChain ? JSON.stringify(blockChain): 'No'} */}
       {/* <ThemedButton onPress={attachBlockChainTopaymentMethod} text={'AttachblockChain'} /> */}
-      {props.blockChain ? `BlockChainAttached ${JSON.stringify(props.blockChain)}` : ''}
+      {/* {props.blockChain ? `BlockChainAttached ${JSON.stringify(props.blockChain)}` : ''} */}
     </React.Fragment>
   )
 

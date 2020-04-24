@@ -2,14 +2,11 @@ import React from 'react';
 import { connect } from "react-redux";
 //@ts-ignore
 import axios from 'axios';
-import { successAccountCreation, failedCreation, startAction, SetProcess } from "../actions/accountActions"
+import { successAccountCreation, failedAccountCreation, startAction, SetProcess } from "../actions/accountActions"
 //@ts-ignore
 import { ThemedButton } from "unifyre-web-wallet-components";
 
 export class CreateAccount extends React.Component<any, any>{
-    constructor(props: any) {
-        super(props);
-    }
 
     handleAccountCreation = async () => {
         try {
@@ -20,22 +17,22 @@ export class CreateAccount extends React.Component<any, any>{
             this.props.dispatch(SetProcess(''));
             return response.data;
         } catch (error) {
-            this.props.dispatch(failedCreation(JSON.stringify(error)));
+            this.props.dispatch(failedAccountCreation(JSON.stringify(error)));
             alert(JSON.stringify(error["message"]))
         }
     }
     render() {
-        const {account, loading} = this.props;
+        const { account } = this.props;
+        // false && this.handleAccountCreation();
         return (
             <React.Fragment>
-               
-                    <ThemedButton onPress={this.handleAccountCreation} text={'Create Account'} />
+                <ThemedButton onPress={this.handleAccountCreation} text={'Create Account'} />
+                {/* {this.handleAccountCreation()} */}
                 <div id="accountData" style={{ color: 'red' }}>
+                    
                     {account ? 'Account created' : ''}
                     <br />
-                    {loading === true ? 'creating account' : undefined}
-                    <br />
-                    
+
                     {/* 
             // @ts-ignore */}
             Account Status: {account ? JSON.stringify(account.response.status) : ''}
@@ -53,7 +50,7 @@ const mapStateToProps = (state: any) => {
     return {
         account: state.accountReducer.account,
         loading: state.accountReducer.loading,
-        error: state.accountReducer.error,
+        accountCreationError: state.accountReducer.error,
         accountFromDb: state.accountReducer.accountFromDb
     }
 }

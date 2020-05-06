@@ -5,8 +5,9 @@ export const successAccountCreation= (payload: any) => ({
   payload
 });
 
-export const startAction = () => ({
-  type: 'STARTED',
+export const startAction = (payload: any) => ({
+  type: constants.START_ACTION,
+  payload
 });
 
 export const failedAccountCreation = (payload: any) => ({
@@ -39,6 +40,11 @@ export const SaveRates = (payload: any) => ({
   payload
 });
 
+export const SaveLimits = (payload: any) => ({
+  type: constants.SAVE_LIMITS,
+  payload
+});
+
 export const SetPlaidError = (payload: any) => ({
   type: constants.PLAID_ERROR,
   payload
@@ -49,7 +55,17 @@ export const SetBuyTransaction = (payload: any) => ({
   payload
 });
 
+export const failedBuyTransaction = (payload: any) => ({
+  type: constants.BUY_TRANSACTION_ERROR,
+  payload
+});
+
 export const SetSellTransaction = (payload: any) => ({
   type: constants.SELL_TRANSACTION,
+  payload
+});
+
+export const failedSellTransaction = (payload: any) => ({
+  type: constants.SELL_TRANSACTION_ERROR,
   payload
 });

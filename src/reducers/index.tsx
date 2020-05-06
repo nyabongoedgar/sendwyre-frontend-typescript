@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-import accountReducer from './accountReducer';
+import reducer from './reducer';
 
 
 export default combineReducers({
-    accountReducer
+    reducer
   });
   

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import axios from "axios";
+import toast from 'toastr';
 //@ts-ignore
 import { ThemedButton } from "unifyre-web-wallet-components";
-import { SavePaymentMethod, SaveBlockChain, SetProcess, SetPlaidError } from '../actions/accountActions'
+import { SavePaymentMethod, SaveBlockChain, SetProcess, SetPlaidError } from '../actions/actionCreators'
 
 
 export function PlaidUi(props: any) {
@@ -13,15 +14,15 @@ export function PlaidUi(props: any) {
     try {
       props.dispatch(SetProcess('Attaching BlockChain to Payment method'));
       const response = await axios.post('http://localhost:3000/api/v1/attachBlockChain', {
-        accountId: props.account.response.id,
+        accountId: props.createdWyreAccount.response.id,
         paymentMethodId: id
       });
       props.dispatch(SaveBlockChain(response.data));
       props.dispatch(SetProcess(''));
-      alert('Account set up completely');
+      toast.success('Account set up successfully');
       return response.data;
     } catch (error) {
-      alert(JSON.stringify(error));
+      toast.error(error.response.data.message, 'Plaid Error')
     }
 
   }
@@ -31,15 +32,14 @@ export function PlaidUi(props: any) {
       const response = await axios.post('http://localhost:3000/api/v1/paymentMethods', {
         //@ts-ignore
         publicToken: publicToken,
-        accountId: props.account.response.id
+        accountId: props.createdWyreAccount.response.id
       });
       props.dispatch(SetProcess('Creating payment method'));
       props.dispatch(SavePaymentMethod(response.data));
-      console.log(props.paymentMethod, '>>>>>>>>>>>>>>>>>>>>>Payment Methods')
       props.dispatch(SetProcess(''));
       return attachBlockChainTopaymentMethod(response.data);
     } catch (error) {
-      console.log(error)
+      toast.error(error.response.data.message, 'Payment method creation failed');
     }
 
   }
@@ -85,9 +85,9 @@ export function PlaidUi(props: any) {
 }
 const mapStateToProps = (state: any) => {
   return {
-    account: state.accountReducer.account,
-    paymentMethod: state.accountReducer.paymentMethod,
-    blockChain: state.accountReducer.blockChain
+    createdWyreAccount: state.reducer.createdWyreAccount,
+    paymentMethod: state.reducer.paymentMethod,
+    blockChain: state.reducer.blockChain
   }
 }
 export default connect(mapStateToProps)(PlaidUi)

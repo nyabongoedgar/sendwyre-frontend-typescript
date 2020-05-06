@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import Trade from './components/Trade';
-import LandingPage from './components/LandingPage';
-import History from './components/History';
+import Trade from './Trade';
+import LandingPage from './LandingPage';
+import History from './History';
 
 function AppRouter() {
     return (
@@ -21,11 +21,9 @@ function AppRouter() {
                         </li>
                     </ul>
                 </nav>
-
-                {/* <Route path="/" exact component={Index} />
-                <Route path="/products/:id" component={Product} /> */}
-                <Route path="/trade" component={Trade} />
+                
                 <Route exact path="/" component={LandingPage} />
+                <Route path="/trade" component={Trade} />
                 <Route exact path="/history" component={History} />
             </div>
         </Router>

@@ -1,11 +1,19 @@
-// export interface StoreState {
-//     languageName: string;
-//     enthusiasmLevel: number;
-// }
 
 export interface StoreState {
-    account: {
-        userId: string;
-        account: any;
-    };
+    createdWyreAccount: any;
+    createWyreAccountLoading: boolean;
+    accountCreationError: any;
+    paymentMethod: any;
+    blockChain: any;
+    userInfoFromDb: any;
+    process: string;
+    rates: any;
+    limits: any;
+    plaidError: any;
+    buyTransaction: any;
+    buyTransactionLoading: boolean;
+    buyTransactionError: any;
+    sellTransaction: any;
+    sellTransactionLoading: boolean;
+    sellTransactionError: any
 }

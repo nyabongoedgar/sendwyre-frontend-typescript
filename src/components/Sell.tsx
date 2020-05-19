@@ -16,11 +16,12 @@ export class Sell extends React.Component<any, any>{
         }
     }
 
-    async handleSellTransaction(body: any, accountId: string) {
+    async handleSellTransaction(body: any) {
         try {
+            const {userInfoFromDb} = this.props;
             this.props.dispatch(startAction({ sellTransactionLoading: true }));
-            const response = await axios.post('http://localhost:3000/api/v1/quoteTransfer', {
-                accountId,
+            const response = await axios.post('http://localhost:3000/api/v1/transfers', {
+                accountId: userInfoFromDb && userInfoFromDb.user.wyreAccount.id,
                 transaction: body
             });
             this.props.dispatch(SetSellTransaction(response.data));
@@ -38,7 +39,7 @@ export class Sell extends React.Component<any, any>{
     renderSellComponent() {
         // this is from unifyre to your bank account
         const { userInfoFromDb } = this.props;
-        let accountId = userInfoFromDb && userInfoFromDb.user.wyreAccount.id;
+        // let accountId = userInfoFromDb && userInfoFromDb.user.wyreAccount.id;
         // let paymentmethodSRN = userInfoFromDb && userInfoFromDb.user.paymentMethods[0].srn;
         let fundsSource = '';
         let paymentmethodSRN = userInfoFromDb && userInfoFromDb.user.paymentMethods[0].srn; //we must tell them to connect a payment Method
@@ -71,7 +72,7 @@ export class Sell extends React.Component<any, any>{
                 <br />
                 USD Equivalent: {symbol === 'BTC' ? (BTC_to_USD * sourceAmountToSell) : (ETH_to_USD * sourceAmountToSell)} usd
                 <br />
-                <ThemedButton text={`Sell ${symbol} `} onPress={() => this.handleSellTransaction(transaction, accountId)} disabled={this.props.sellTransactionLoading} />
+                <ThemedButton text={`Sell ${symbol} `} onPress={() => this.handleSellTransaction(transaction)} disabled={this.props.sellTransactionLoading} />
             </React.Fragment>
         )
     }

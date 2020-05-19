@@ -25,8 +25,9 @@ export class Trade extends React.Component<any, any>{
         })();
     }
 
-    async fetchUser(userId: any) {
+    fetchUser = async (userId: any) => {
         const response = await axios.get(`http://localhost:3000/api/v1/users/${userId}`);
+        console.log(this.props, 'fetch user')
         this.props.dispatch(CheckUserAccount(response.data));
     }
 

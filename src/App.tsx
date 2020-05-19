@@ -24,17 +24,6 @@ export class App extends React.Component<any, any> {
     this.props.dispatch(CheckUserAccount(response.data));
   }
 
-  // componentDidMount() {
-  //   // we could first redirect user to an auth page, and through props, we send data to the App.tsx
-  //   (async () => {
-  //     const response = await axios.get('http://localhost:3000/api/v1/users/900');
-  //     console.log(response.data, 'user data');
-  //     this.props.dispatch(CheckUserAccount(response.data));
-  //   })().then(() => {
-  //     const { userInfoFromDb } = this.props;
-  //     if (userInfoFromDb === null || userInfoFromDb.success === false) this.handleAccountCreation()
-  //   });
-  // }
   /**
    * Connect to unifyre, get user info, create account automatically, ask user to connect bank account there and then
    */
@@ -60,17 +49,9 @@ export class App extends React.Component<any, any> {
         const bal = user.accountGroups[0].addresses[0].balance;
         this.setState({ signedIn: true, setAddress: addr, balance: bal, currency: cur, userId: user.userId }, async () => {
           const { name } = this.state;
-          // we shall then query the user data and call it from the database
-          // const response = await axios.get(`http://localhost:3000/api/v1/users/{user.userId}`);
-          // this.props.dispatch(CheckUserAccount(response.data));
           await this.fetchUser(user.userId);
           const { userInfoFromDb } = this.props;
           if (userInfoFromDb === null || userInfoFromDb.success === false) {
-            // userId: string;
-            // displayName: string;
-            // appId: string;
-            // email ?: string;
-            // accountGroups: UserAccountGroup[];
             const accountDetails = { "type": "INDIVIDUAL", "country": "US", "subaccount": true, "profileFields": [{ "fieldId": "individualLegalName", "value": `${user.displayName} ${user.displayName}` }, { "fieldId": "individualEmail", "value": user.email }, /*{ "fieldId": "individualResidenceAddress", "value": { "street1": "1 Market St", "street2": "Suite 402", "city": "San Francisco", "state": "CA", "postalCode": "94105", "country": "US" }  } */] }
             let accountBody = {
               accountDetails,

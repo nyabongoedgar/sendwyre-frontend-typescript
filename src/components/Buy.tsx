@@ -29,7 +29,8 @@ export class Buy extends React.Component<any, any>{
             this.props.dispatch(SetBuyTransaction(response.data));
             toast.success('You have bought crypto success, wait for a few minutes', 'Crypto Purchase')
             //we need to fetch user data here again
-            this.showModal();
+            this.props.fetchUser(this.props.unifyreUserProfile.userId);
+            // this.showModal();
             return response.data;
         } catch (error) {
             this.props.dispatch(failedBuyTransaction(error.response.data));
@@ -107,7 +108,7 @@ export class Buy extends React.Component<any, any>{
 
         // let transaction = { /*source: `${fundsSource}`*/ source: "ethereum: 0xdB5435FeeBd064bdEe1c841158e14d235d0FA6FF", sourceCurrency: "ETH", /*sourceAmount: sourceAmount,*/ sourceAmount: 0.00002, /*"dest": `${symbol}:${unifyreAddress}`*/ dest:"ethereum:0x415C07a820B30080d531048b589Fe27910e00639", /*destCurrency: `${symbol}` , */ /* autoConfirm: true */ };
 
-        let transaction = { source: "ethereum: 0xdB5435FeeBd064bdEe1c841158e14d235d0FA6FF", sourceCurrency: "ETH", sourceAmount: 0.00002, dest: "ethereum:0x415C07a820B30080d531048b589Fe27910e00639", preview: true, amountIncludeFees: true };
+        let transaction = { source: "ethereum: 0xdB5435FeeBd064bdEe1c841158e14d235d0FA6FF", sourceCurrency: "ETH", sourceAmount: 0.00002, dest: "ethereum:0x415C07a820B30080d531048b589Fe27910e00639", autoConfirm: true, amountIncludeFees: true };
         return (
             <React.Fragment>
                 <h1>Buy {symbol}</h1>
@@ -150,11 +151,6 @@ export class Buy extends React.Component<any, any>{
             <React.Fragment>
                 <Gap />
                 {this.renderBuyComponent()}
-                <Modal handleClose={this.hideModal} show={this.state.showModal} >
-                    <p>A modal should have sommethon</p>
-                    <p>A modal should have sommethon</p>
-                    <button onClick={this.confirmBuy}>Confim transaction</button>
-                </Modal>
             </React.Fragment>
         );
     }

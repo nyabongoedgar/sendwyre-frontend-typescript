@@ -19,17 +19,19 @@
     "node-sass": "^4.14.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-load-script": "^0.0.6",
     "react-loading": "^2.0.3",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
-    "react-table": "^7.0.4",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
+    "simple-react-modal": "^0.5.1",
     "toastr": "^2.1.4",
     "typescript": "~3.7.2",
-    "unifyre-web-wallet-components": "git+https://github.com/nyabongoedgar/unifyre-web-wallet-components2.git"
+    "unifyre-extension-sdk": "git+https://github.com/ferrumnet/unifyre-extension-sdk.git",
+    "unifyre-web-wallet-components": "git+https://github.com/nyabongoedgar/unifyre-web-components.git#ft-project-structure"
   },
   "scripts": {
     "start": "react-scripts start",

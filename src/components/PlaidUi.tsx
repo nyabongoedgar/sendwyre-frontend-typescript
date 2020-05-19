@@ -10,12 +10,12 @@ import { SavePaymentMethod, SaveBlockChain, SetProcess, SetPlaidError } from '..
 export function PlaidUi(props: any) {
 
   const attachBlockChainTopaymentMethod = async (data: any) => {
-    const id = data.paymentMethod.id;
+    const paymentMethodId = data.paymentMethod.id;
     try {
       props.dispatch(SetProcess('Attaching BlockChain to Payment method'));
       const response = await axios.post('http://localhost:3000/api/v1/attachBlockChain', {
-        accountId: props.createdWyreAccount.response.id,
-        paymentMethodId: id
+        accountId: typeof props.userInfoFromDb.user.wyreAccount.id !== "undefined" && props.userInfoFromDb.user.wyreAccount.id || props.createdWyreAccount.response.id,
+        paymentMethodId: paymentMethodId
       });
       props.dispatch(SaveBlockChain(response.data));
       props.dispatch(SetProcess(''));
@@ -32,7 +32,7 @@ export function PlaidUi(props: any) {
       const response = await axios.post('http://localhost:3000/api/v1/paymentMethods', {
         //@ts-ignore
         publicToken: publicToken,
-        accountId: props.createdWyreAccount.response.id
+        accountId: typeof props.userInfoFromDb.user.wyreAccount.id !== "undefined" && props.userInfoFromDb.user.wyreAccount.id || props.createdWyreAccount.response.id
       });
       props.dispatch(SetProcess('Creating payment method'));
       props.dispatch(SavePaymentMethod(response.data));
@@ -70,7 +70,7 @@ export function PlaidUi(props: any) {
 
   return (
     <React.Fragment>
-      <ThemedButton onPress={() => handler.open()} text={'Connect Bank Account'} />
+      <ThemedButton onPress={() => handler.open()} style={{backgroundColor: "white!important"}} text={'Connect Bank Account'} />
       <br />
       {props.paymentMethod ? `Payment method has been attached to your account: ${props.paymentMethod.paymentMethod.id}` : ''}
       <br />

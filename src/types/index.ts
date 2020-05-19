@@ -15,5 +15,7 @@ export interface StoreState {
     buyTransactionError: any;
     sellTransaction: any;
     sellTransactionLoading: boolean;
-    sellTransactionError: any
+    sellTransactionError: any,
+    unifyreUserProfile: any,
+    transferQuote: any
 }

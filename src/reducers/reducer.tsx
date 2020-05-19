@@ -12,12 +12,14 @@ const intialState = {
   rates: null,
   limits: null,
   plaidError: null,
-  buyTransaction: {},
+  buyTransaction: null,
   buyTransactionLoading: false,
   buyTransactionError: null,
   sellTransaction: null,
   sellTransactionLoading: false,
-  sellTransactionError: null
+  sellTransactionError: null,
+  unifyreUserProfile: null,
+  transferQuote: null
 };
 
 const reducer = (state: StoreState = intialState, action: any): StoreState => {
@@ -72,13 +74,13 @@ const reducer = (state: StoreState = intialState, action: any): StoreState => {
         ...state,
         rates: action.payload
       };
-    
+
     case constants.SAVE_LIMITS:
       return {
         ...state,
         limits: action.payload
       };
-    
+
     case constants.PLAID_ERROR:
       return {
         ...state,
@@ -112,6 +114,19 @@ const reducer = (state: StoreState = intialState, action: any): StoreState => {
         buyTransactionError: action.payload,
         buyTransactionLoading: false
       };
+
+      case constants.SAVE_UNIFYRE_USER_PROFILE:
+        return {
+          ...state,
+          unifyreUserProfile : action.payload
+        }
+
+      case constants.SAVE_TRANSFER_QUOTE:
+        return {
+          ...state,
+          transferQuote: action.payload
+
+        }
     default:
       return state;
   }

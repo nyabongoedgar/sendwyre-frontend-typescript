@@ -4,13 +4,13 @@ import axios from 'axios';
 import Loader from './Loader';
 import { CheckUserAccount } from '../actions/actionCreators';
 export function History(props: any): any {
-    React.useEffect(() => {
-        (async () => {
-            const response = await axios.get('http://localhost:3000/api/v1/users/900');
-            console.log(response.data, 'user data');
-            props.dispatch(CheckUserAccount(response.data));
-        })();
-    }, [])
+    // React.useEffect(() => {
+    //     (async () => {
+    //         const response = await axios.get('http://localhost:3000/api/v1/users/900');
+    //         console.log(response.data, 'user data');
+    //         props.dispatch(CheckUserAccount(response.data));
+    //     })();
+    // }, [])
     const { userInfoFromDb } = props;
 
     if (userInfoFromDb === null) {
@@ -22,16 +22,20 @@ export function History(props: any): any {
     }
 
     const transactions = userInfoFromDb.user && userInfoFromDb.user.transactions;
-
+    console.log(transactions ,' total fees')
     return (
         <React.Fragment>
             {transactions !== undefined ?
-                (<table className="table">
+                (
+                <React.Fragment>
+                <h1>Transaction History</h1>
+                <table className="table">
                     <thead>
                         <tr>
                             <th scope="col">Status</th>
                             <th scope="col">Source Amount</th>
                             <th scope="col">Destination Amount</th>
+                            <th scope="col">Total Fees</th>
                             <th scope="col">Transaction Id</th>
                             <th scope="col">CreatedAt</th>
                         </tr>
@@ -44,6 +48,7 @@ export function History(props: any): any {
                                     <td>{element.status}</td>
                                     <td>{element.sourceAmount}</td>
                                     <td>{element.destAmount}</td>
+                                    <td>{element.totalFess}</td>
                                     <td>
                                         <a href={`https://www.testwyre.com/track/${element.id}`} target={"_blank"}>
                                             {element.id}
@@ -55,7 +60,7 @@ export function History(props: any): any {
                         }).reverse()}
 
                     </tbody>
-                </table >) : 'You currently have no transactions'}
+                </table > </React.Fragment>) : 'You currently have no transactions'}
         </React.Fragment>
     )
 }

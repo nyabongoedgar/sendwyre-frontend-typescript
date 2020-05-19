@@ -69,3 +69,13 @@ export const failedSellTransaction = (payload: any) => ({
   type: constants.SELL_TRANSACTION_ERROR,
   payload
 });
+
+export const saveUnifyreUserProfile = (payload: any) => ({
+  type: constants.SAVE_UNIFYRE_USER_PROFILE,
+  payload
+});
+
+export const saveTransferQuote = (payload: any) => ({
+  type: constants.SAVE_TRANSFER_QUOTE,
+  payload
+});

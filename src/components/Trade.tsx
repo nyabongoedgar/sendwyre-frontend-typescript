@@ -11,7 +11,7 @@ import { SaveRates, SaveLimits, CheckUserAccount } from '../actions/actionCreato
 export class Trade extends React.Component<any, any>{
     constructor(props: any) {
         super(props);
-        this.state = {showModal: false}
+        // this.state = {showModal: false}
     }
     componentDidMount() {
         /**
@@ -31,9 +31,9 @@ export class Trade extends React.Component<any, any>{
         this.props.dispatch(CheckUserAccount(response.data));
     }
 
-    handleChange(event: any) {
-        this.setState({ [event.target.name]: event.target.value });
-    }
+    // handleChange(event: any) {
+    //     this.setState({ [event.target.name]: event.target.value });
+    // }
 
 
 
@@ -50,8 +50,8 @@ export class Trade extends React.Component<any, any>{
                 <Gap />
                 {
                     action === "buy" ?
-                        <Buy fetchUser={this.fetchUser} handleChange={this.handleChange} /> :
-                        <Sell fetchUser={this.fetchUser} handleChange={this.handleChange} />
+                        <Buy fetchUser={this.fetchUser}  /> :
+                        <Sell fetchUser={this.fetchUser} />
                 }
             </React.Fragment>
         );

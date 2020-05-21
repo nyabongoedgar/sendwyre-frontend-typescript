@@ -83,7 +83,7 @@ export class App extends React.Component<any, any> {
             {paymentMethodStatus === 'APPROVED' ?
               <p>You can also transact with your payment method</p> :
               <p>{`Your bank account is connected payment method is in status ${paymentMethodStatus}`}</p>}
-            <Trade action={'buy'} />
+            <Trade action={'sell'} />
             <Gap />
             <History />
           </React.Fragment>

@@ -6,14 +6,14 @@ import toast from 'toastr';
 
 /* As a partner developer, you will not have direct access to the customer's personal information. The underlying personal information is exposed only in response to demands made to Wyre lawfully (or, in some cases, in support of security authorization). */
 type WyreDebitCardState = {
-    dest: string,
+    dest?: string,
     destCurrency?: string,
     sourceAmount: number,
     showWidget: boolean
 }
 
 type WyreDebitCardProps = {
-    dest: string,
+    dest?: string,
     destCurrency?: string,
     sourceAmount: number,
 }
@@ -75,8 +75,9 @@ export class WyreDebitCard extends React.Component<WyreDebitCardProps, WyreDebit
 
 
         const showWidgetButton = () => {
+            const {dest, sourceAmount} = this.state;
             //@ts-ignore
-            var widget = new window.Wyre.Widget({
+            var widget = new Wyre({
                 env: "test",
                 accountId: "AC_JZRHZANBEFP",
                 auth: {
@@ -84,10 +85,11 @@ export class WyreDebitCard extends React.Component<WyreDebitCardProps, WyreDebit
                     secretKey: deviceToken,
                 },
                 operation: {
-                    type: "debitcard",
-                    destCurrency: "ETH",
-                    destAmount: 0.01,
-                    dest: "0x415C07a820B30080d531048b589Fe27910e00639", //meta mask kovan eth
+                    type: "debitcard-hosted-dialog",
+                    destCurrency: destCurrency || "ETH",
+                    destAmount: sourceAmount || 0,
+                    dest: dest || "0x415C07a820B30080d531048b589Fe27910e00639", //meta mask kovan eth
+                    paymentMethod: 'debit-card'
                 },
             });
 
@@ -111,20 +113,24 @@ export class WyreDebitCard extends React.Component<WyreDebitCardProps, WyreDebit
                 console.log("ready", e);
                 // widget.open();
             });
+
+            widget.on('paymentSuccess', function(paymentObject: any ){
+                console.log(paymentObject , 'paymentSuccess')
+            })
             return (
-                <button onClick={() => widget.open()}>WyreDebitCard</button>
+                <button onClick={() => widget.open()}>DebitCard</button>
             )
         };
 
         return (
             <React.Fragment>
                 <Script
-                    url="https://verify.sendwyre.com/js/widget-loader.js"
+                    url="https://verify.sendwyre.com/js/verify-module-init-beta.js"
                     onCreate={() => console.log('creating script')}
                     onError={() => console.log('error creating script')}
                     onLoad={() => this.setState({ showWidget: true })}
                 />
-                {!!showWidget ? showWidgetButton() : 'Loading Wyre Script'}
+                {!!showWidget ? showWidgetButton() : 'Loading Wyre Widget'}
             </React.Fragment>
         );
     }

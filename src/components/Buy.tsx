@@ -19,6 +19,10 @@ export class Buy extends React.Component<any, any>{
         }
     }
 
+    handleChange(event: any) {
+        this.setState({ [event.target.name]: event.target.value });
+    }
+
     async handleTransfer(body: any, accountId: string) {
         try {
             this.props.dispatch(startAction({ buyTransactionLoading: true }))
@@ -78,19 +82,21 @@ export class Buy extends React.Component<any, any>{
 
         const { addresses } = this.props.unifyreUserProfile.accountGroups[0];
         const { symbol, currency: unifyreCurrency, balance, address: unifyreAddress } = addresses[0];
+        console.log(unifyreCurrency, symbol, unifyreAddress, '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' )
         const { sourceAmount } = this.state;
         const { userInfoFromDb } = this.props;
         const paymentMethod = userInfoFromDb && userInfoFromDb.user.paymentMethods[0];
-        // let fundsSource = userInfoFromDb && userInfoFromDb.user.paymentMethods[0].srn;
-        let fundsSource = '';
+        let paymentmethodName = userInfoFromDb && userInfoFromDb.user.paymentMethods[0].name;
+        // let fundsSource = '';
 
         let accountId = this.props.userInfoFromDb && this.props.userInfoFromDb.user.wyreAccount.id;
-        console.log(fundsSource, 'funds source');
+        // console.log(fundsSource, 'funds source');
         console.log(accountId);
         const rates = this.props.rates && this.props.rates.rates;
         console.log(rates);
-        const whatYouGetInBTC = rates ? Number((1 / rates.BTCUSD.USD) * sourceAmount) : 0;
-        const whatYouGetInETH = rates ? Number((1 / rates.ETHUSD.USD) * sourceAmount) : 0;
+        // const whatYouGetInBTC = rates ? rates.USDBTC * sourceAmount : 0;
+        console.log(rates, "{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}}}}}" )
+        const whatYouGetInETH =  rates && rates.USDETH * sourceAmount
 
         // let transaction = {
         //     "source":"ethereum:0xdb5435feebd064bdee1c841158e14d235d0fa6ff",
@@ -99,13 +105,10 @@ export class Buy extends React.Component<any, any>{
         //     "autoConfirm": true
         // };
 
-        const BTC_to_USD = rates && `${rates.BTCUSD.BTC} BTC`;
-        const ETH_to_USD = rates && `${rates.ETHUSD.ETH} ETH`;
-
 
         // const fee = sourceAmount * 0.0075;
-        const fee = symbol.toUpperCase() == 'BTC' ? whatYouGetInBTC * 0.0075 : whatYouGetInETH * 0.0075;
-
+        // const fee = symbol.toUpperCase() == 'BTC' ? whatYouGetInBTC * 0.0075 : whatYouGetInETH * 0.0075;
+        const fee = whatYouGetInETH * 0.0075;
         // let transaction = { /*source: `${fundsSource}`*/ source: "ethereum: 0xdB5435FeeBd064bdEe1c841158e14d235d0FA6FF", sourceCurrency: "ETH", /*sourceAmount: sourceAmount,*/ sourceAmount: 0.00002, /*"dest": `${symbol}:${unifyreAddress}`*/ dest:"ethereum:0x415C07a820B30080d531048b589Fe27910e00639", /*destCurrency: `${symbol}` , */ /* autoConfirm: true */ };
 
         let transaction = { source: "ethereum: 0xdB5435FeeBd064bdEe1c841158e14d235d0FA6FF", sourceCurrency: "ETH", sourceAmount: 0.00002, dest: "ethereum:0x415C07a820B30080d531048b589Fe27910e00639", autoConfirm: true, amountIncludeFees: true };
@@ -114,28 +117,30 @@ export class Buy extends React.Component<any, any>{
                 <h1>Buy {symbol}</h1>
                 <br />
                 I want to spend:  <br />
-                <input type="number" name="sourceAmount" value={sourceAmount} onChange={(e: any) => this.props.handleChange(e)} placeholder={'Amount to buy'} required />
+                <input type="number" name="sourceAmount" value={sourceAmount} onChange={(e: any) => this.handleChange(e)} placeholder={'Amount to buy'} required />
                 <br />
-                Indicative price: 1 USD =  {BTC_to_USD && ETH_to_USD ? (symbol.toUpperCase() === 'BTC' ? BTC_to_USD : ETH_to_USD) : 'loading'}
+                Indicative price: 1 USD =  {rates ? rates.USDETH + 'ETH' : 'loading'}
                 <br />
                 Approximate fee : {`${fee} ${symbol}`}
                 <br />
-                You will receive: {symbol.toUpperCase() === 'BTC' ? `${whatYouGetInBTC} BTC` : `${whatYouGetInETH} ETH`}
+                {/* You will receive: {symbol.toUpperCase() === 'BTC' ? `${whatYouGetInBTC} BTC` : `${whatYouGetInETH} ETH`} */}
+                You will receive approximately: {`${whatYouGetInETH - fee} ETH`}
                 <br />
+                <div style={{display: "flex", justifyContent: "space-evenly", flexDirection: "row", width: "410px"}}>
+                Buy with : <WyreDebitCard /*dest={`${symbol}:unifyreAddress`} */ sourceAmount={sourceAmount} />
 
-                Buy with : <WyreDebitCard dest={'0x98B031783d0efb1E65C4072C6576BaCa0736A912'} sourceAmount={2} />
-
-                <ThemedButton text={`Buy ${symbol} with your bank account`} onPress={() => this.handleTransfer(transaction, "AC_JZRHZANBEFP" /*accountId*/)} disabled={this.props.buyTransactionLoading || !paymentMethod} />
+                <ThemedButton text={`Buy ${symbol} with your bank account ${paymentmethodName}`} onPress={() => this.handleTransfer(transaction, "AC_JZRHZANBEFP" /*accountId*/)} disabled={this.props.buyTransactionLoading || !paymentMethod} />
+                </div>
             </React.Fragment>)
     };
 
-    showModal = () => {
-        this.setState({ showModal: true });
-    };
+    // showModal = () => {
+    //     this.setState({ showModal: true });
+    // };
 
-    hideModal = () => {
-        this.setState({ showModal: false });
-    };
+    // hideModal = () => {
+    //     this.setState({ showModal: false });
+    // };
 
     render() {
         const { showModal } = this.state;

@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from "axios";
 import { connect } from "react-redux";
+import { UnifyreExtensionKitWeb } from 'unifyre-extension-sdk/dist/web/UnifyreExtensionKitWeb';
 import toast from 'toastr';
 import Loader from './Loader';
 //@ts-ignore
@@ -16,25 +17,34 @@ export class Sell extends React.Component<any, any>{
         }
     }
 
+    async sendMoney(amountToSend: any, wyrePaymentMethodEthAddress: any) {
+        const client = await UnifyreExtensionKitWeb.client();
+        const res = await client.sendMoney(wyrePaymentMethodEthAddress, 'ETH', amountToSend);
+        console.log('SEND MONEY RESPONSE: ', res);
+        return res;
+      }
+
     handleChange(event: any) {
         this.setState({ [event.target.name]: event.target.value });
     }
 
-    async handleSellTransaction(body: any) {
+    async handleSellTransaction(sourceAmountToSell: any) {
         try {
             const {userInfoFromDb} = this.props;
+            const paymentMethodEthAdress = userInfoFromDb && userInfoFromDb.user.paymentMethods[0].blockchains.ETH;
             this.props.dispatch(startAction({ sellTransactionLoading: true }));
-            const response = await axios.post('http://localhost:3000/api/v1/transfers', {
-                accountId: userInfoFromDb && userInfoFromDb.user.wyreAccount.id,
-                transaction: body
-            });
-            this.props.dispatch(SetSellTransaction(response.data));
+            const response = await this.sendMoney(sourceAmountToSell, paymentMethodEthAdress,  )
+            // const response = await axios.post('http://localhost:3000/api/v1/transfers', {
+            //     accountId: userInfoFromDb && userInfoFromDb.user.wyreAccount.id,
+            //     transaction: body
+            // });
+            this.props.dispatch(SetSellTransaction(response));
             toast.success('You have sold crypto successfully, wait for a few minute', 'Crypto Sold');
             await this.props.fetchUser(this.props.unifyreUserProfile.userId);
-            return response.data;
+            return response;
         } catch (error) {
             this.props.dispatch(failedSellTransaction(error))
-            toast.error(error.response.data.message, 'Sell Transaction failed');
+            toast.error(error, 'Sell Transaction failed');
         }
     }
 
@@ -57,16 +67,10 @@ export class Sell extends React.Component<any, any>{
         console.log(rates, 'sell');
         const { addresses } = this.props.unifyreUserProfile.accountGroups[0];
         const { symbol, currency: unifyreCurrency, balance: unifyreBalance, address: unifyreAddress, network } = addresses[0];
-        let transaction = { /*source: `${network.toLowerCase()}:${unifyreAddress}` */ source: 'ethereum:0x415C07a820B30080d531048b589Fe27910e00639', sourceCurrency: symbol, sourceAmount: sourceAmountToSell, /* "dest": `${paymentmethodSRN}:ach*/ dest: "0xdb5435feebd064bdee1c841158e14d235d0fa6ff", destCurrency: "ETH" || "USD", autoConfirm: true };
-        console.log(transaction);
 
-        let testTransForError = {
-            source: "ethereum: 0x415C07a820B30080d531048b589Fe27910e00639",
-            sourceCurrency: "ETH",
-            sourceAmount: 0.0003,
-            dest: "ethereum:0x415C07a820B30080d531048b589Fe27910e00639",
-            autoConfirm: true
-        }
+        console.log(symbol, 'symbol', unifyreCurrency, 'unifyre currency', unifyreBalance, 'unifyreBalance', unifyreAddress, 'unifyreAddress',network, 'network');
+
+
 
         //correct, issue with source is given, this is because of permissions
         /* ideally, we need to send this money to the eth address of the wyre Account, then, we then use the account's eth address as source, so
@@ -74,26 +78,11 @@ export class Sell extends React.Component<any, any>{
         2. we then send funds from the wyre Account to the payment method
         */
 
-        let realTransactionInFuture = {
-            source: `${symbol}:${unifyreAddress}`,
-            sourceCurrency: `${symbol}`,
-            sourceAmount: sourceAmountToSell,
-            autoConfirm: true,
-            amountIncludeFees: true
-        }
-        console.log(realTransactionInFuture, 'real transaction in future')
+
+
         // payment methods have blockChains
         let wyreAccountDepositAddresses = userInfoFromDb && userInfoFromDb.user.wyreAccount.depositAddresses;
-        console.log(wyreAccountDepositAddresses, 'main gut')
-        let idealTransaction = {
-            source: wyreAccountDepositAddresses.ETH /** here we need to probably pull our very own account address */,
-            sourceCurrency: 'ETH',
-            dest: paymentMethodblockChains.ETH,
-            destCurrency: 'ETH',
-            sourceAmount: sourceAmountToSell
-        }
 
-        console.log(idealTransaction, 'ideal >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
         return (
             <React.Fragment>
                 <h1>Sell {symbol}</h1>
@@ -106,7 +95,7 @@ export class Sell extends React.Component<any, any>{
                 Indicative price : 1 ETH = {`${ETH_to_USD} USD`}
                 <br />
                 {/* <ThemedButton text={`Sell ${symbol} `} onPress={() => this.handleSellTransaction(transaction)} disabled={this.props.sellTransactionLoading} /> */}
-                <ThemedButton text={`Sell ${symbol} `} onPress={() => this.handleSellTransaction(testTransForError)} disabled={this.props.sellTransactionLoading} />
+                <ThemedButton text={`Sell ${symbol} `} onPress={() => this.handleSellTransaction(sourceAmountToSell)} disabled={this.props.sellTransactionLoading} />
 
             </React.Fragment>
         )

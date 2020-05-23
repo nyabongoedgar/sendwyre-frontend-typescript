@@ -1,8 +1,9 @@
 import React from 'react';
 import { UnifyreExtensionKitWeb } from 'unifyre-extension-sdk/dist/web/UnifyreExtensionKitWeb';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import axios from "axios";
 import toast from 'toastr';
+import { RootState } from "./reducers";
 //@ts-ignore
 import { Gap } from 'unifyre-web-wallet-components';
 import Loader from './components/Loader';
@@ -12,7 +13,25 @@ import PlaidUi from './components/PlaidUi';
 import './customStyles/toast.scss';
 import './customStyles/modal.scss';
 import { CheckUserAccount, startAction, SetProcess, successAccountCreation, failedAccountCreation, saveUnifyreUserProfile } from './actions/actionCreators';
-export class App extends React.Component<any, any> {
+
+type AppState = {
+  signedIn: boolean, setAddress: any, balance: any, currency: any, userId: any, name: any, showWyre: boolean, wait: any, err: any
+}
+
+const mapState = (state: RootState) => {
+  return {
+    userInfoFromDb: state.reducer.userInfoFromDb,
+    process: state.reducer.process,
+    unifyreUserProfile: state.reducer.unifyreUserProfile,
+  }
+}
+
+const connector = connect(mapState);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+type Props = PropsFromRedux;
+
+export class App extends React.Component<Props, AppState> {
 
   constructor(props: any) {
     super(props);
@@ -83,7 +102,7 @@ export class App extends React.Component<any, any> {
             {paymentMethodStatus === 'APPROVED' ?
               <p>You can also transact with your payment method</p> :
               <p>{`Your bank account is connected payment method is in status ${paymentMethodStatus}`}</p>}
-            <Trade action={'sell'} />
+            <Trade action={'buy'} />
             <Gap />
             <History />
           </React.Fragment>
@@ -151,11 +170,4 @@ export class App extends React.Component<any, any> {
   }
 }
 
-const mapStateToProps = (state: any) => {
-  return {
-    userInfoFromDb: state.reducer.userInfoFromDb,
-    process: state.reducer.process
-  }
-}
-
-export default connect(mapStateToProps)(App);
+export default connector(App);

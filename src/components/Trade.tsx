@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from "axios";
-import { connect } from "react-redux";
+import { connect, ConnectedProps } from "react-redux";
+import {RootState} from "../reducers";
 import Loader from './Loader';
 //@ts-ignore
 import { InputGroupAddon, ThemedButton, Gap } from 'unifyre-web-wallet-components';
@@ -8,7 +9,18 @@ import Buy from './Buy';
 import Sell from './Sell';
 import { SaveRates, SaveLimits, CheckUserAccount } from '../actions/actionCreators';
 
-export class Trade extends React.Component<any, any>{
+
+const mapState = (state: RootState) => {
+    return {
+        userInfoFromDb: state.reducer.userInfoFromDb
+    }
+}
+
+const connector = connect(mapState);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+type Props = PropsFromRedux & {action: 'buy' | 'sell'};
+export class Trade extends React.Component<Props, {}>{
     constructor(props: any) {
         super(props);
         // this.state = {showModal: false}
@@ -59,18 +71,4 @@ export class Trade extends React.Component<any, any>{
 
 }
 
-const mapStateToProps = (state: any) => {
-    return {
-        userInfoFromDb: state.reducer.userInfoFromDb,
-        rates: state.reducer.rates,
-        buyTransaction: state.reducer.buyTransaction,
-        buyTransactionLoading: state.reducer.buyTransactionLoading,
-        buyTransactionError: state.reducer.buyTransactionError,
-        sellTransaction: state.reducer.sellTransaction,
-        sellTransactionLoading: state.reducer.sellTransactionLoading,
-        sellTransactionError: state.reducer.sellTransactionError,
-        unifyreUserProfile: state.reducer.unifyreUserProfile
-    }
-}
-
-export default connect(mapStateToProps)(Trade);
+export default connector(Trade);

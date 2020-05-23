@@ -1,7 +1,7 @@
 import * as constants from '../constants';
-import { StoreState } from '../types';
+import * as types from '../types';
 
-const intialState = {
+const intialState: types.StoreState = {
   createdWyreAccount: null,
   createWyreAccountLoading: false,
   accountCreationError: null,
@@ -22,7 +22,7 @@ const intialState = {
   transferQuote: null
 };
 
-const reducer = (state: StoreState = intialState, action: any): StoreState => {
+const reducer = (state = intialState, action: types.wyreActions): types.StoreState => {
   switch (action.type) {
     case constants.START_ACTION:
       return {
@@ -51,7 +51,6 @@ const reducer = (state: StoreState = intialState, action: any): StoreState => {
       };
 
     case constants.SAVE_BLOCK_CHAIN:
-      console.log(action.payload, 'saving blockChain')
       return {
         ...state,
         blockChain: action.payload,

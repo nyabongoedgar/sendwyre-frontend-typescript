@@ -2,6 +2,7 @@ import React from 'react';
 //@ts-ignore
 import Script from 'react-load-script'
 import toast from 'toastr';
+import axios from 'axios';
 
 
 /* As a partner developer, you will not have direct access to the customer's personal information. The underlying personal information is exposed only in response to demands made to Wyre lawfully (or, in some cases, in support of security authorization). */
@@ -114,8 +115,18 @@ export class WyreDebitCard extends React.Component<WyreDebitCardProps, WyreDebit
                 // widget.open();
             });
 
-            widget.on('paymentSuccess', function(paymentObject: any ){
-                console.log(paymentObject , 'paymentSuccess')
+            widget.on('paymentSuccess', async function(paymentObject: any ){
+                console.log(paymentObject , 'paymentSuccess');
+                // const accountId = paymentObject.data.data.accountId;
+                // const transferId = paymentObject.data.data.transferId;
+                // try{
+                //     let response = await axios.get(`http://localhost:3000/api/v1/debitcard?accountId=${accountId}&transferId=${transferId}`);
+                //     console.log(response.data, 'response.data from widget');
+                // }
+                // catch(error){
+                //     console.log(error);
+                // }
+
             })
             return (
                 <button onClick={() => widget.open()}>DebitCard</button>

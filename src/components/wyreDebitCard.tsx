@@ -117,15 +117,15 @@ export class WyreDebitCard extends React.Component<WyreDebitCardProps, WyreDebit
 
             widget.on('paymentSuccess', async function(paymentObject: any ){
                 console.log(paymentObject , 'paymentSuccess');
-                // const accountId = paymentObject.data.data.accountId;
-                // const transferId = paymentObject.data.data.transferId;
-                // try{
-                //     let response = await axios.get(`http://localhost:3000/api/v1/debitcard?accountId=${accountId}&transferId=${transferId}`);
-                //     console.log(response.data, 'response.data from widget');
-                // }
-                // catch(error){
-                //     console.log(error);
-                // }
+                const accountId = paymentObject.data.data.accountId;
+                const transferId = paymentObject.data.data.transferId;
+                try{
+                    let response = await axios.get(`http://localhost:3000/api/v1/debitcard?accountId=${accountId}&transferId=${transferId}`);
+                    console.log(response.data, 'response.data from widget');
+                }
+                catch(error){
+                    console.log(error);
+                }
 
             })
             return (

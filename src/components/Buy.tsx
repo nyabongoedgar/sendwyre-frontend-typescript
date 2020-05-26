@@ -110,7 +110,7 @@ export class Buy extends React.Component<Props, BuyState>{
         const { sourceAmount } = this.state;
         const { userInfoFromDb } = this.props;
         const paymentMethod = userInfoFromDb && userInfoFromDb.user.paymentMethods[0];
-        let paymentmethodName = userInfoFromDb && userInfoFromDb.user.paymentMethods[0].name;
+        // let paymentmethodName = userInfoFromDb && userInfoFromDb.user.paymentMethods[0].name;
         let accountId = this.props.userInfoFromDb && this.props.userInfoFromDb.user.wyreAccount.id;
         console.log(accountId);
         const rates = this.props.rates && this.props.rates.rates;
@@ -143,7 +143,7 @@ export class Buy extends React.Component<Props, BuyState>{
                 <div style={{ display: "flex", justifyContent: "space-evenly", flexDirection: "row", width: "410px" }}>
                     Buy with : <WyreDebitCard /*dest={`${symbol}:unifyreAddress`} */ sourceAmount={sourceAmount} />
 
-                    <ThemedButton text={`Buy ${symbol} with your bank account ${paymentmethodName}`} onPress={() => this.handleTransfer(transaction, "AC_JZRHZANBEFP" /*accountId*/)} disabled={this.props.buyTransactionLoading || !paymentMethod} />
+                    <ThemedButton text={`Buy ${symbol} with your bank account`} onPress={() => this.handleTransfer(transaction, "AC_JZRHZANBEFP" /*accountId*/)} disabled={this.props.buyTransactionLoading} />
                 </div>
             </React.Fragment>)
     };

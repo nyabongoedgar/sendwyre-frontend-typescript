@@ -92,16 +92,13 @@ export class App extends React.Component<Props, AppState> {
   renderComponentsForVerifiedUser() {
     const { userInfoFromDb } = this.props;
     const wyreAccountStatus = userInfoFromDb.user && userInfoFromDb.user.wyreAccount.status;
-    const paymentMethodStatus = userInfoFromDb.user && userInfoFromDb.user.paymentMethods[0].status;
+    // const paymentMethodStatus = userInfoFromDb.user && userInfoFromDb.user.paymentMethods[0].status;
     const { unifyreUserProfile } = this.props;
     if (unifyreUserProfile !== null) {
       if (wyreAccountStatus === 'OPEN') {
         return (
           <React.Fragment>
-            <p>Account Status : {wyreAccountStatus}</p> {/* we have this one page Trade / History */}
-            {paymentMethodStatus === 'APPROVED' ?
-              <p>You can also transact with your payment method</p> :
-              <p>{`Your bank account is connected payment method is in status ${paymentMethodStatus}`}</p>}
+            <p>Account Status : {wyreAccountStatus}</p>
             <Trade action={'buy'} />
             <Gap />
             <History />
@@ -115,28 +112,31 @@ export class App extends React.Component<Props, AppState> {
 
   renderPlaidUI() {
     const { userInfoFromDb } = this.props;
-    const paymentMethodStatus = userInfoFromDb.user && userInfoFromDb.user.paymentMethods[0].status;
-    const paymentMethod = userInfoFromDb.user && userInfoFromDb.user.paymentMethods;
-    console.log(paymentMethodStatus, typeof paymentMethodStatus, 'payment method info');
-    return (
-      <React.Fragment>
-        {!paymentMethod.length ?
-          (<div style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "black",
-            color: "white",
-            borderRadius: "10px"
-          }}
-          >
-            <PlaidUi />
-            <p><em>Connect your bank account to be able to use it to buy crypto and also send money to it</em></p>
-          </div>) : undefined
-        }
-      </React.Fragment>
-    );
+
+    if(userInfoFromDb && userInfoFromDb.user) {
+      // const paymentMethodStatus = userInfoFromDb.user && userInfoFromDb.user.paymentMethods[0].status;
+      const paymentMethod = userInfoFromDb.user && userInfoFromDb.user.paymentMethods;
+      // console.log(paymentMethodStatus, typeof paymentMethodStatus, 'payment method info');
+      return (
+        <React.Fragment>
+          {!paymentMethod.length ?
+            (<div style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "black",
+              color: "white",
+              borderRadius: "10px"
+            }}
+            >
+              <PlaidUi />
+              <p><em>Connect your bank account to be able to use it to buy crypto and also send money to it</em></p>
+            </div>) : undefined
+          }
+        </React.Fragment>
+      );
+    }
   }
 
   handleAccountCreation = async (body: any, userId: string) => {
@@ -150,8 +150,9 @@ export class App extends React.Component<Props, AppState> {
       await this.fetchUser(userId);
       return response.data;
     } catch (error) {
-      this.props.dispatch(failedAccountCreation(JSON.stringify(error.response.data)));
-      toast.error(error.response.data.message);
+      console.log(error, 'From handle account creation')
+      // this.props.dispatch(failedAccountCreation(JSON.stringify(error.response.data)));
+      // toast.error(error.response.data.message);
     }
   }
 

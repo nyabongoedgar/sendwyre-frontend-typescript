@@ -29,6 +29,7 @@ export function PlaidUi(props: any) {
 
   const createPaymentMethod = async (publicToken: string) => {
     try {
+      console.log(props, 'props in create payment method')
       const response = await axios.post('http://localhost:3000/api/v1/paymentMethods', {
         //@ts-ignore
         publicToken: publicToken,
@@ -39,7 +40,8 @@ export function PlaidUi(props: any) {
       props.dispatch(SetProcess(''));
       return attachBlockChainTopaymentMethod(response.data);
     } catch (error) {
-      toast.error(error.response.data.message, 'Payment method creation failed');
+      console.log(error, 'payment method')
+      // toast.error(error.response.data.message, 'Payment method creation failed');
     }
 
   }
@@ -87,7 +89,8 @@ const mapStateToProps = (state: any) => {
   return {
     createdWyreAccount: state.reducer.createdWyreAccount,
     paymentMethod: state.reducer.paymentMethod,
-    blockChain: state.reducer.blockChain
+    blockChain: state.reducer.blockChain,
+    userInfoFromDb: state.reducer.userInfoFromDb
   }
 }
 export default connect(mapStateToProps)(PlaidUi)

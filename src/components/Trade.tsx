@@ -8,7 +8,7 @@ import { InputGroupAddon, ThemedButton, Gap } from 'unifyre-web-wallet-component
 import Buy from './Buy';
 import Sell from './Sell';
 import { SaveRates, SaveLimits, CheckUserAccount } from '../actions/actionCreators';
-
+import {WYRE_BACKEND_ENDPOINT} from '../urls';
 
 const mapState = (state: RootState) => {
     return {
@@ -30,15 +30,15 @@ export class Trade extends React.Component<Props, {}>{
          * get exchange rates and limits
          */
         (async () => {
-            const rates = await axios.get("http://localhost:3000/api/v1/rates");
-            const limits = await axios.get("http://localhost:3000/api/v1/limits");
+            const rates = await axios.get(`${WYRE_BACKEND_ENDPOINT}/rates`);
+            const limits = await axios.get(`${WYRE_BACKEND_ENDPOINT}/limits`);
             this.props.dispatch(SaveRates(rates.data))
             this.props.dispatch(SaveLimits(limits.data))
         })();
     }
 
     fetchUser = async (userId: any) => {
-        const response = await axios.get(`http://localhost:3000/api/v1/users/${userId}`);
+        const response = await axios.get(`${WYRE_BACKEND_ENDPOINT}/users/${userId}`);
         console.log(this.props, 'fetch user')
         this.props.dispatch(CheckUserAccount(response.data));
     }

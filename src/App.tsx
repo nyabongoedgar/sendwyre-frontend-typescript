@@ -13,6 +13,7 @@ import PlaidUi from './components/PlaidUi';
 import './customStyles/toast.scss';
 import './customStyles/modal.scss';
 import { CheckUserAccount, startAction, SetProcess, successAccountCreation, failedAccountCreation, saveUnifyreUserProfile } from './actions/actionCreators';
+import {WYRE_BACKEND_ENDPOINT} from './urls';
 
 type AppState = {
   signedIn: boolean, setAddress: any, balance: any, currency: any, userId: any, name: any, showWyre: boolean, wait: any, err: any
@@ -39,7 +40,7 @@ export class App extends React.Component<Props, AppState> {
   }
 
   async fetchUser(userId: any) {
-    const response = await axios.get(`http://localhost:3000/api/v1/users/${userId}`);
+    const response = await axios.get(`${WYRE_BACKEND_ENDPOINT}/users/${userId}`);
     this.props.dispatch(CheckUserAccount(response.data));
   }
 
@@ -49,7 +50,7 @@ export class App extends React.Component<Props, AppState> {
   async componentDidMount() {
     // const ENDPOINT = 'http://localhost:9000/api/';
     // const ENDPOINT = 'http://localhost:3002/api/';
-    const ENDPOINT = 'https://ube.ferrumnetwork.io/api/';
+    const ENDPOINT = `https://ube.ferrumnetwork.io/api/`;
     const c = await UnifyreExtensionKitWeb.initialize('WYRE_WIDGET', ENDPOINT);
     // console.log('INIT RES?', c, UnifyreExtensionKitWeb._container);
     const token = (new URL(document.location.href)).searchParams.get("token");
@@ -130,7 +131,7 @@ export class App extends React.Component<Props, AppState> {
               borderRadius: "10px"
             }}
             >
-              <PlaidUi />
+              <PlaidUi fetchUser={this.fetchUser} />
               <p><em>Connect your bank account to be able to use it to buy crypto and also send money to it</em></p>
             </div>) : undefined
           }
@@ -143,7 +144,7 @@ export class App extends React.Component<Props, AppState> {
     try {
       this.props.dispatch(startAction({ createWyreAccountLoading: true }));
       this.props.dispatch(SetProcess('Creating an account for you'));
-      const response = await axios.post('http://localhost:3000/api/v1/accounts', body)
+      const response = await axios.post(`${WYRE_BACKEND_ENDPOINT}/accounts`, body)
       this.props.dispatch(successAccountCreation(response.data));
       toast.success('Account Created');
       this.props.dispatch(SetProcess(''));

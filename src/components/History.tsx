@@ -1,31 +1,29 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import axios from 'axios';
+import { connect, ConnectedProps } from 'react-redux';
 import Loader from './Loader';
-import { CheckUserAccount } from '../actions/actionCreators';
-export function History(props: any): any {
-    // React.useEffect(() => {
-    //     (async () => {
-    //         const response = await axios.get('http://localhost:3000/api/v1/users/900');
-    //         console.log(response.data, 'user data');
-    //         props.dispatch(CheckUserAccount(response.data));
-    //     })();
-    // }, [])
+import {RootState} from '../reducers';
+
+const mapState = (state: RootState) => {
+    return {
+        userInfoFromDb: state.reducer.userInfoFromDb,
+    }
+};
+
+const connector = connect(mapState);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+type Props = PropsFromRedux;
+
+export function History(props: Props): any {
+
     const { userInfoFromDb } = props;
-
-    if (userInfoFromDb === null) {
-        return <Loader />
-    }
-
-    if (userInfoFromDb.success === false) {
-        return 'No account Found'
-    }
-
     const transactions = userInfoFromDb.user && userInfoFromDb.user.transactions;
-    console.log(transactions ,' total fees')
+    console.log(transactions, 'user transactions');
+
     return (
         <React.Fragment>
-            {transactions !== undefined ?
+            {!transactions.length ?
                 (
                 <React.Fragment>
                 <h1>Transaction History</h1>
@@ -65,7 +63,4 @@ export function History(props: any): any {
     )
 }
 
-const mapStateToProps = (state: any) => ({
-    userInfoFromDb: state.reducer.userInfoFromDb
-})
-export default connect(mapStateToProps)(History)
+export default connector(History)

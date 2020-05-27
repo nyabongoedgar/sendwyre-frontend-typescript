@@ -7,7 +7,8 @@ import axios from "axios";
 import toast from 'toastr';
 import Loader from './Loader';
 import { SetBuyTransaction, failedBuyTransaction, startAction } from '../actions/actionCreators';
-import { WyreDebitCard } from './wyreDebitCard';
+import { WyreDebitCard } from './WyreDebitCard';
+import {WYRE_BACKEND_ENDPOINT} from '../urls';
 
 
 type BuyState = {
@@ -51,7 +52,7 @@ export class Buy extends React.Component<Props, BuyState>{
     async handleTransfer(body: any, accountId: string) {
         try {
             this.props.dispatch(startAction({ buyTransactionLoading: true }))
-            const response = await axios.post('http://localhost:3000/api/v1/transfers', {
+            const response = await axios.post(`${WYRE_BACKEND_ENDPOINT}/transfers`, {
                 accountId,
                 transaction: body
             });

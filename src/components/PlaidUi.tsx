@@ -36,10 +36,9 @@ export function PlaidUi(props: Props) {
       props.dispatch(SaveBlockChain(response.data));
       props.dispatch(SetProcess(''));
       toast.success('Account set up successfully');
-      // return response.data;
-      await props.fetchUser(props.unifyreUserProfile.userId);
     } catch (error) {
-      toast.error(error.response.data.message, 'Plaid Error')
+      console.log(error, 'error in calling unifyre user')
+      // toast.error(error.response.data.message, 'Plaid Error')
     }
 
   }
@@ -47,7 +46,6 @@ export function PlaidUi(props: Props) {
   const createPaymentMethod = async (publicToken: string) => {
     try {
       props.dispatch(SetProcess('Creating payment method'));
-      console.log(props, 'props in create payment method')
       const response = await axios.post(`${WYRE_BACKEND_ENDPOINT}/paymentMethods`, {
         //@ts-ignore
         publicToken: publicToken,
@@ -65,9 +63,10 @@ export function PlaidUi(props: Props) {
   // @ts-ignore
   let handler = new WyrePmWidget({
     env: "test",
-    onSuccess: function (result: any) {
+    onSuccess: async function (result: any) {
       // Here you would forward the publicToken back to your server in order to  be shipped to the Wyre API
-      createPaymentMethod(result.publicToken);
+      await createPaymentMethod(result.publicToken);
+      window.location.reload(false);
     },
     onExit: function (err: any) {
       if (err != null) {

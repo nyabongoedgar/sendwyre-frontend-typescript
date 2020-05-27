@@ -159,6 +159,7 @@ export class App extends React.Component<Props, AppState> {
 
   render() {
     const { userInfoFromDb, process } = this.props;
+    console.log(process);
     if (userInfoFromDb === null) {
       return <Loader />
     }

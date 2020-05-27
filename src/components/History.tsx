@@ -23,7 +23,7 @@ export function History(props: Props): any {
 
     return (
         <React.Fragment>
-            {!transactions.length ?
+            {!!transactions.length ?
                 (
                 <React.Fragment>
                 <h1>Transaction History</h1>
